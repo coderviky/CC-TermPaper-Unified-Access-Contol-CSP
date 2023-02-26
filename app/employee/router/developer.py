@@ -1,4 +1,4 @@
-from employee.models import Employee, EmployeeRoleEnum
+from employee.models import Employee
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, HTTPException, File, Form, UploadFile
@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 # s3
 from csp import aws_s3
+from core.models import Permission, IAMDetails, PermissionRolesEnum, Bucket, CSPEnum
 
 from core import database
 get_db = database.get_db
@@ -29,11 +30,11 @@ class DownloadFileRequest(BaseModel):
     # file_size: int
 
 
-@router.get("/upload-file-url")
+@router.post("/upload-file-url")
 def get_upload_sined_url(request: UploadFileRequest, db: Session = Depends(get_db)):
     # Return user
     employee = db.query(Employee).filter(Employee.username == request.username, Employee.password ==
-                                         request.password, Employee.role == EmployeeRoleEnum.DEVELOPER).first()
+                                         request.password, Employee.role == PermissionRolesEnum.DEVELOPER).first()
     # check permissions
 
     # get bucket data
@@ -42,7 +43,7 @@ def get_upload_sined_url(request: UploadFileRequest, db: Session = Depends(get_d
     # get access key data
 
     # send request to s3
-    aws_s3.get_signed_upload_url(bucket_name=bucket, )
+    # aws_s3.get_signed_upload_url(bucket_name=bucket, )
 
     # return sined url
     return {}

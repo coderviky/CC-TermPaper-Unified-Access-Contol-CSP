@@ -36,3 +36,7 @@ def get_download_url(bucket_name, object_name, aws_access_key_id, aws_secret_acc
     except Exception as e:
         print(e)
         return None
+
+
+def create_bucket_for_company(company):
+    return 'bucket created for compnay'
