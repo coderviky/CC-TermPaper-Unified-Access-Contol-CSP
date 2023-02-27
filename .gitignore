@@ -9,6 +9,7 @@ __pycache__/
 
 # vs code
 .vscode
+./ct.txt
 
 # Distribution / packaging
 .Python

@@ -30,6 +30,7 @@ class Employee(Base):
     admin = relationship("Employee", remote_side=id,
                          backref="created_employee")
 
+    # only for admin and auditor
     iam_id = Column(Integer, ForeignKey('iamdetails.id'))
     iam = relationship("IAMDetails", backref="employee")
 

@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, HTTPException, File, Form, UploadFile
 from typing import List, Optional
 from pydantic import BaseModel
+from core.constants import Constants
+import os
 
 # s3
 from csp import aws_s3
@@ -29,52 +31,44 @@ class CreateDeveloper(BaseModel):
     developer_password: str
 
 
-class CreateAuditor(BaseModel):
-    username: str
-    password: str
-    comapny_name: str
-    auditor_username: str
-    auditor_password: str
-
-
-class CreateCompany(BaseModel):
-    username: str
-    password: str
-    comapny_name: str
-    company_username: str
-    company_password: str
-
-
 @router.post("/create-developer")
 def create_developer(request: CreateDeveloper, db: Session = Depends(get_db)):
     # Return user
-    admin = db.query(Employee).filter(Employee.username == request.username,
-                                      Employee.password == request.password, Employee.role == PermissionRolesEnum.ADMIN).first()
+    admin: Employee = db.query(Employee).filter(Employee.username == request.username,
+                                                Employee.password == request.password, Employee.role == PermissionRolesEnum.ADMIN).first()
     if admin is None:
         raise HTTPException(status_code=404, detail="no admin found!")
 
     # assign bucket
-    bucket = db.query(Bucket).filter(
-        Bucket.type == PermissionRolesEnum.DEVELOPER).first()
+    bucket: Bucket = db.query(Bucket).filter(
+        Bucket.role_type == PermissionRolesEnum.DEVELOPER).first()
 
-    # create iam and access key
-    # iam_details=  aws_iam.create_iam_employee_user(
-    #     employee_type=PermissionRolesEnum.DEVELOPER, username, name)
-    iam = IAMDetails(role=PermissionRolesEnum.DEVELOPER, iam_user='iam_dev_' +
-                     request.username, accesskey='iam_dev_key_'+request.password)
-    db.add(iam)
-    db.commit()
-    db.refresh(iam)
+    # # create iam and access key
+    # # iam_details=  aws_iam.create_iam_employee_user(
+    # #     employee_type=PermissionRolesEnum.DEVELOPER, username, name)
+    # iam = IAMDetails(role=PermissionRolesEnum.DEVELOPER, iam_user='iam_dev_' +
+    #                  request.username, accesskey='iam_dev_key_'+request.password)
+    # db.add(iam)
+    # db.commit()
+    # db.refresh(iam)
 
     # create developer account
     developer = Employee(name=request.name, username=request.developer_username,
-                         password=request.developer_password, role=PermissionRolesEnum.DEVELOPER, created_by=admin.id, iam_id=iam.id, bucket_id=bucket.id)
+                         password=request.developer_password, role=PermissionRolesEnum.DEVELOPER, created_by=admin.id, bucket_id=bucket.id)
 
     db.add(developer)
     db.commit()
     db.refresh(developer)
 
     return developer
+
+
+class CreateAuditor(BaseModel):
+    username: str
+    password: str
+    comapny_name: str
+    auditor_username: str
+    auditor_password: str
 
 
 @router.post("/create-auditor")
@@ -101,6 +95,14 @@ def create_auditor(request: CreateAuditor, db: Session = Depends(get_db)):
     db.refresh(auditor)
 
     return auditor
+
+
+class CreateCompany(BaseModel):
+    username: str
+    password: str
+    comapny_name: str
+    company_username: str
+    company_password: str
 
 
 @router.post("/create-company")
@@ -138,3 +140,90 @@ def create_company(request: CreateCompany, db: Session = Depends(get_db)):
     db.refresh(company)
 
     return company
+
+
+class InitData(BaseModel):
+    passkey: str
+    # create admin
+    admin_username: str
+    admin_password: str
+
+    # create iam user for admin
+    iam_username: str
+    iam_csp: CSPEnum = CSPEnum.AWS
+    iam_accesskey: str
+    iam_secretkey: str
+
+    # create developer bucket
+    developer_bucket_name: str
+    developer_bucket_csp: CSPEnum = CSPEnum.AWS
+
+# init db with admin username password aws iam detail
+
+
+@router.post("/init-data")
+def init(request: InitData, db: Session = Depends(get_db)):
+    # check passkey from env
+    if request.passkey != os.environ['PASSKEY']:
+        raise HTTPException(status_code=401, detail="passkey not matched!")
+
+    # create iam user for admin
+    admin_iam = IAMDetails(role=PermissionRolesEnum.ADMIN,
+                           iam_username=request.iam_username, iam_csp=request.iam_csp,
+                           accesskey=request.iam_accesskey,
+                           secretkey=request.iam_secretkey,
+                           )
+
+    db.add(admin_iam)
+    db.commit()
+    db.refresh(admin_iam)
+
+    admin = Employee(name='Admin', username=request.admin_username,
+                     password=request.admin_password, role=PermissionRolesEnum.ADMIN, iam_id=admin_iam.id)
+    db.add(admin)
+
+    # create permissions direct
+    # # admin
+    admin_permission_list = [
+        Constants.CREATE_BUCKET_POLICY,
+        Constants.CREATE_BUCKET,
+        Constants.GET_LIST_OF_ALL_BUCKETS,
+        Constants.GET_BUCKET_POLICY,
+        Constants.CREATE_DEVELOPER_USER,
+        Constants.CREATE_AUDITOR_USER,
+        Constants.CREATE_COMPANY_CUSTOMER]
+    admin_permission = Permission(
+        role=PermissionRolesEnum.ADMIN, permissions=admin_permission_list)
+
+    # #auditor
+    auditor_permission = Permission(
+        role=PermissionRolesEnum.AUDITOR, permissions=[Constants.GET_BUCKET_POLICY, Constants.GET_LIST_OF_ALL_BUCKETS])
+
+    # #developer
+    developer_permission = Permission(
+        role=PermissionRolesEnum.DEVELOPER, permissions=[Constants.GET_SIGNED_URL])
+
+    # #company
+    company_permission = Permission(
+        role=PermissionRolesEnum.COMPANY, permissions=[Constants.GET_SIGNED_URL, Constants.GET_LIST_OF_ALL_FILES, Constants.DELETE_FILE_BY_ID])
+
+    db.add_all([admin_permission, auditor_permission,
+                developer_permission, company_permission])
+    db.commit()
+
+    # create developer bucket
+    developer_bucket = Bucket(bucket_name=request.developer_bucket_name,
+                              csp=request.developer_bucket_csp, iam_id=admin_iam.id, role_type=PermissionRolesEnum.DEVELOPER)
+    db.add(developer_bucket)
+
+    db.commit()
+    db.refresh(admin)
+    db.refresh(admin_permission)
+    db.refresh(auditor_permission)
+    db.refresh(developer_permission)
+    db.refresh(company_permission)
+    db.refresh(developer_bucket)
+
+    return {"admin": admin, "admin_iam": admin_iam, "permissions": [
+        admin_permission, auditor_permission, developer_permission, company_permission
+    ], "developer_bucket": developer_bucket}

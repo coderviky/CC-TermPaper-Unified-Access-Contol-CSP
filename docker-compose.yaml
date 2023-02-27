@@ -13,6 +13,7 @@ services:
             - POSTGRES_PASSWORD=password
             - POSTGRES_DB=appdb
             - POSTGRES_SERVER=db
+            - PASSKEY=init_data_passkey
         volumes:
             - ./app:/app
         depends_on:
