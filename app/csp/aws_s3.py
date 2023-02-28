@@ -48,5 +48,5 @@ def get_signed_download_url(bucket_name, object_name, aws_access_key_id, aws_sec
         return None
 
 
-def create_bucket_for_company(company):
-    return 'bucket created for compnay'
+def create_s3_bucket(bucket_name, aws_access_key_id, aws_secret_access_key, iam_details):
+    return 'bucket created'

@@ -63,7 +63,7 @@ def init_data():
         "iam_username": "viky",
         "iam_csp": "aws",
         "iam_accesskey": "AKIAYER34XFCXUMQDAUK",
-        "iam_secretkey": "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",
+        "iam_secretkey": "",
 
         "developer_bucket_name": "cfb-developer",
         "developer_bucket_csp": "aws"

@@ -7,11 +7,6 @@ def dev_get_upload_signed_url(data):
     response = requests.post(
         f'{baseURL}/developer/get-upload-signed-url', json=data)
     print(response.json())
-    # if (response.status_code == 200):
-    #     print(response.json())
-    # elif (response.status_code == 401):
-    #     print(response.json())
-    # return response
 
 
 # download url
@@ -24,7 +19,7 @@ def dev_get_download_signed_url(data):
 def main():
     print("in main")
     # Generate a presigned S3 POST URL
-    object_name = 'abcd.txt'
+    object_name = 'cms.png'
     data = {
         "username": GlobalVariables.DEV_USERNAME1,
         "password": GlobalVariables.DEV_USERNAME1,
@@ -49,8 +44,5 @@ def main():
     print(f'File upload HTTP status code: {http_response.status_code}')
 
 
-# print("Always executed")
-
 if __name__ == "__main__":
-    print("Executed when invoked directly")
     main()

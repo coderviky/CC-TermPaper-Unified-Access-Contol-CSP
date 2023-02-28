@@ -61,8 +61,8 @@ class Bucket(Base):
 class Object(Base):
     __tablename__ = 'objects'
     id = Column(Integer, primary_key=True, index=True)
-    object_name = Column(String)
-    signed_url = Column(String)
+    object_name = Column(String, unique=True)
+    # signed_url = Column(String)
 
     bucket_id = Column(Integer, ForeignKey('buckets.id'))
     bucket = relationship("Bucket", backref="objects")

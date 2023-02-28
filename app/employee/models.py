@@ -41,15 +41,15 @@ class Employee(Base):
     # permission = relationship("Permission", backref="employee")
 
 
-class DeveloperFile(Base):
-    __tablename__ = 'developerfiles'
-    id = Column(Integer, primary_key=True, index=True)
-    file_name = Column(String, nullable=False)
-    upaload_to = Column(Enum(CSPEnum))
-    signed_url = Column(String)
+# class DeveloperFile(Base):
+#     __tablename__ = 'developerfiles'
+#     id = Column(Integer, primary_key=True, index=True)
+#     file_name = Column(String, nullable=False)
+#     upaload_to = Column(Enum(CSPEnum))
+#     signed_url = Column(String)
 
-    created_by = Column(Integer, ForeignKey('employees.id'))
-    developers = relationship("Employee", backref="files")
+#     created_by = Column(Integer, ForeignKey('employees.id'))
+#     developers = relationship("Employee", backref="files")
 
-    bucket_id = Column(Integer, ForeignKey('buckets.id'))
-    bucket = relationship("Bucket", backref="developer_files")
+#     bucket_id = Column(Integer, ForeignKey('buckets.id'))
+#     bucket = relationship("Bucket", backref="developer_files")

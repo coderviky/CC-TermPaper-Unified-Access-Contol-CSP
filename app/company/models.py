@@ -32,15 +32,15 @@ class Company(Base):
     # permission = relationship("Permission", backref="company")
 
 
-class CompanyFile(Base):
-    __tablename__ = 'companyfiles'
-    id = Column(Integer, primary_key=True, index=True)
-    file_name = Column(String, nullable=False)
-    upaload_to = Column(Enum(CSPEnum))
-    signed_url = Column(String)
+# class CompanyFile(Base):
+#     __tablename__ = 'companyfiles'
+#     id = Column(Integer, primary_key=True, index=True)
+#     file_name = Column(String, nullable=False)
+#     upaload_to = Column(Enum(CSPEnum))
+#     signed_url = Column(String)
 
-    created_by = Column(Integer, ForeignKey('companies.id'))
-    companies = relationship("Company", backref="files")
+#     created_by = Column(Integer, ForeignKey('companies.id'))
+#     companies = relationship("Company", backref="files")
 
-    bucket_id = Column(Integer, ForeignKey('buckets.id'))
-    bucket = relationship("Bucket", backref="company_files")
+#     bucket_id = Column(Integer, ForeignKey('buckets.id'))
+#     bucket = relationship("Bucket", backref="company_files")
