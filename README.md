@@ -8,16 +8,9 @@ Code implementation on research paper - [Unified Cloud Access Control Model for 
 ## Run App
 
 ```sh
-# create and activate venv
-python3 -m venv env
-source env/bin/activate
+#using docker-compose
+docker-compose up
 
-# install packages
-pip3 install -r requirements.txt
-
-# run app
-cd app
-uvicorn main:app --reload --host 0.0.0.0
 
 ```
 

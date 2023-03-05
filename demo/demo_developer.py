@@ -19,7 +19,7 @@ def dev_get_download_signed_url(data):
 def main():
     print("in main")
     # Generate a presigned S3 POST URL
-    object_name = 'cms.png'
+    object_name = 'dataset.png'
     data = {
         "username": GlobalVariables.DEV_USERNAME1,
         "password": GlobalVariables.DEV_USERNAME1,
