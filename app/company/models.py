@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from core.database import Base
-from core.models import CSPEnum, PermissionRolesEnum
+from core.models import CSPEnum, UserRolesEnum
 
 import enum
 from sqlalchemy import Enum
@@ -16,8 +16,8 @@ class Company(Base):
     username = Column(String)
     email = Column(String, nullable=True)
     password = Column(String, nullable=False)
-    role = Column(Enum(PermissionRolesEnum),
-                  default=PermissionRolesEnum.COMPANY)
+    role = Column(Enum(UserRolesEnum),
+                  default=UserRolesEnum.COMPANY)
 
     created_by = Column(Integer, ForeignKey('employees.id'))
     admin = relationship("Employee", backref="created_companies")

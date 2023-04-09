@@ -38,7 +38,7 @@ def dev_get_upload_url():
     dev_data = {
         "username": GlobalVariables.DEV_USERNAME1,
         "password": GlobalVariables.DEV_USERNAME1,
-        "file_name": "string"
+        "file_name": "abcd.txt"
     }
     dev_get_upload_signed_url(data=dev_data)
 
@@ -66,7 +66,102 @@ def init_data():
         "iam_secretkey": "",
 
         "developer_bucket_name": "cfb-developer",
-        "developer_bucket_csp": "aws"
+        "developer_bucket_csp": "aws",
+        # rules data from CreateRule model in rule.py
+        "rules_data": [
+            {
+                "user_role": "developer",
+                "object_type": "file",
+                "env_day": "weekday",
+                "operation": "get",
+                "description": "Developer can get files on weekdays."
+            },
+            {
+                "user_role": "developer",
+                "object_type": "file",
+                "env_day": "weekday",
+                "operation": "create",
+                "description": "Developer can create files on weekdays."
+            },
+            {
+                "user_role": "admin",
+                "object_type": "bucket",
+                "env_day": "weekday",
+                "operation": "create",
+                "description": "Admin can create buckets on weekdays."
+            },
+            {
+                "user_role": "admin",
+                "object_type": "bucket",
+                "env_day": "weekday",
+                "operation": "get",
+                "description": "Admin can get buckets on weekdays."
+            },
+            {
+                "user_role": "admin",
+                "object_type": "bucket",
+                "env_day": "weekday",
+                "operation": "list",
+                "description": "Admin can list buckets on weekdays."
+            },
+            {
+                "user_role": "admin",
+                "object_type": "bucket",
+                "env_day": "weekday",
+                "operation": "delete",
+                "description": "Admin can delete buckets on weekdays."
+            },
+            {
+                "user_role": "admin",
+                "object_type": "bucket_policy",
+                "env_day": "weekday",
+                "operation": "create",
+                "description": "Admin can create bucket policies on weekdays."
+            },
+            {
+                "user_role": "admin",
+                "object_type": "bucket_policy",
+                "env_day": "weekday",
+                "operation": "get",
+                "description": "Admin can get bucket policies on weekdays."
+            },
+            {
+                "user_role": "auditor",
+                "object_type": "bucket",
+                "env_day": "weekday",
+                "operation": "list",
+                "description": "Auditor can list buckets on weekdays."
+            },
+            {
+                "user_role": "auditor",
+                "object_type": "bucket_policy",
+                "env_day": "weekday",
+                "operation": "get",
+                "description": "Auditor can get bucket policies on weekdays."
+            },
+            {
+                "user_role": "company",
+                "object_type": "file",
+                "env_day": "weekday",
+                "operation": "get",
+                "description": "Company can get files on weekdays."
+            },
+            {
+                "user_role": "company",
+                "object_type": "file",
+                "env_day": "weekday",
+                "operation": "list",
+                "description": "Company can list files on weekdays."
+            },
+            {
+                "user_role": "company",
+                "object_type": "file",
+                "env_day": "weekday",
+                "operation": "delete",
+                "description": "Company can delete files on weekdays."
+            }
+        ]
+
     }
     admin_initdata(data)
 

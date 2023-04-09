@@ -37,3 +37,11 @@ def admin_create_company(data):
     if (response.status_code == 200):
         print(response.json())
     # return response
+
+
+# create rules in policy
+def admin_create_rules(data):
+    response = requests.post(f'{baseURL}/admin/create-rules', json=data)
+    if (response.status_code == 200):
+        print(response.json())
+    # return response

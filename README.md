@@ -2,6 +2,10 @@
 
 Code implementation on research paper - [Unified Cloud Access Control Model for Cloud Storage Broker](https://ieeexplore.ieee.org/document/8717982)
 
+New Development:
+
+-   ABAC is implement for access control
+
 <br/><br/>
 <br/><br/>
 

@@ -4,3 +4,5 @@ sqlalchemy
 psycopg2-binary
 boto3
 pydantic
+pandas
+# pickle5

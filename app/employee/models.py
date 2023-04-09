@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from core.database import Base
-from core.models import CSPEnum, PermissionRolesEnum
+from core.models import CSPEnum, UserRolesEnum
 
 
 import enum
@@ -23,8 +23,7 @@ class Employee(Base):
     username = Column(String)
     password = Column(String, nullable=False)
     email = Column(String, nullable=True)
-    role = Column(Enum(PermissionRolesEnum),
-                  default=PermissionRolesEnum.DEVELOPER)
+    # role = Column(Enum(PermissionRolesEnum),default=PermissionRolesEnum.DEVELOPER)
 
     created_by = Column(Integer, ForeignKey('employees.id'))
     admin = relationship("Employee", remote_side=id,
@@ -37,19 +36,12 @@ class Employee(Base):
     bucket_id = Column(Integer, ForeignKey('buckets.id'))
     bucket = relationship("Bucket", backref="employee")
 
+    ####### ------- ABAC ------- #######
+    # user attributes -> column  &  values -> enums
+    # role - User_Role & values : {admin, auditor, developer, company}
+    role = Column(Enum(UserRolesEnum),
+                  default=UserRolesEnum.DEVELOPER)
+    # team
+
     # permission_id = Column(Integer, ForeignKey('permissions.id'))
     # permission = relationship("Permission", backref="employee")
-
-
-# class DeveloperFile(Base):
-#     __tablename__ = 'developerfiles'
-#     id = Column(Integer, primary_key=True, index=True)
-#     file_name = Column(String, nullable=False)
-#     upaload_to = Column(Enum(CSPEnum))
-#     signed_url = Column(String)
-
-#     created_by = Column(Integer, ForeignKey('employees.id'))
-#     developers = relationship("Employee", backref="files")
-
-#     bucket_id = Column(Integer, ForeignKey('buckets.id'))
-#     bucket = relationship("Bucket", backref="developer_files")
